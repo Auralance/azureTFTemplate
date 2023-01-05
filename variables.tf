@@ -1,3 +1,8 @@
+#Tenant ID
+variable "tenant_id" {
+  type = string
+}
+
 # Virtual machine settings
 variable "vm_name" {
   type    = string
