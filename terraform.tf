@@ -18,6 +18,18 @@ resource "azurerm_resource_group" "my_group" {
   location = "westus"
 }
 
+# Create a service principal
+resource "azurerm_azuread_service_principal" "my_sp" {
+  display_name = "My Service Principal"
+}
+
+# Assign the "Contributor" role to the service principal at the subscription level
+resource "azurerm_role_assignment" "contributor_role" {
+  scope                = var.tenant_id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_azuread_service_principal.my_sp.id
+}
+
 # Create a virtual network
 resource "azurerm_virtual_network" "my_vnet" {
   name                = "my-vnet"
