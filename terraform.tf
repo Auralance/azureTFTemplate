@@ -1,0 +1,66 @@
+# Configure the Azure Provider
+provider "azurerm" {
+  version = "2.37.0"
+  features {}
+}
+
+# Create a resource group
+resource "azurerm_resource_group" "my_group" {
+  name     = "my-resource-group"
+  location = "westus"
+}
+
+# Create a virtual network
+resource "azurerm_virtual_network" "my_vnet" {
+  name                = "my-vnet"
+  resource_group_name = azurerm_resource_group.my_group.name
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.my_group.location
+}
+
+# Create a subnet
+resource "azurerm_subnet" "my_subnet" {
+  name                 = "my-subnet"
+  resource_group_name  = azurerm_resource_group.my_group.name
+  virtual_network_name = azurerm_virtual_network.my_vnet.name
+  address_prefix       = "10.0.1.0/24"
+}
+
+# Create a public IP address
+resource "azurerm_public_ip" "my_ip" {
+  name                = "my-ip"
+  resource_group_name = azurerm_resource_group.my_group.name
+  location            = azurerm_resource_group.my_group.location
+  allocation_method   = "Dynamic"
+}
+
+# Create a network security group
+resource "azurerm_network_security_group" "my_nsg" {
+  name                = "my-nsg"
+  resource_group_name = azurerm_resource_group.my_group.name
+  location            = azurerm_resource_group.my_group.location
+}
+
+# Create a security rule
+resource "azurerm_network_security_rule" "my_rule" {
+  name                        = "my-rule"
+  resource_group_name         = azurerm_resource_group.my_group.name
+  network_security_group_name  = azurerm_network_security_group.my_nsg.name
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+}
+
+# Create a virtual machine
+resource "azurerm_virtual_machine" "my_vm" {
+  name                  = "my-vm"
+  resource_group_name   = azurerm_resource_group.my_group.name
+  location              = azurerm_resource_group.my_group.location
+  size                  = "Standard_DS1_v2"
+  network_interface_ids = [azurerm_network_interface.my_nic.id]
+  vm_image_id           = "Canonical:UbuntuServer:18
