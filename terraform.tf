@@ -5,6 +5,7 @@ provider "azurerm" {
 }
 
 # Load variables from the variable file
+variable "tenant_id" {}
 variable "vm_name" {}
 variable "vm_size" {}
 variable "vm_image" {}
