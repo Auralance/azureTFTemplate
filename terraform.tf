@@ -11,7 +11,6 @@ variable "vm_image" {}
 
 variable "resource_group_name" {}
 
-
 # Create a resource group
 resource "azurerm_resource_group" "my_group" {
   name     = "my-resource-group"
@@ -34,6 +33,7 @@ resource "azurerm_subnet" "my_subnet" {
   address_prefix       = "10.0.1.0/24"
 }
 
+
 # Create a public IP address
 resource "azurerm_public_ip" "my_ip" {
   name                = "my-ip"
@@ -49,6 +49,7 @@ resource "azurerm_network_security_group" "my_nsg" {
   location            = azurerm_resource_group.my_group.location
 }
 
+
 # Create a security rule
 resource "azurerm_network_security_rule" "my_rule" {
   name                        = "my-rule"
@@ -63,6 +64,22 @@ resource "azurerm_network_security_rule" "my_rule" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
 }
+
+# Create a Key Vault
+resource "azurerm_key_vault" "my_key_vault" {
+  name                = "my-key-vault"
+  location            = azurerm_resource_group.my_group.location
+  resource_group_name = azurerm_resource_group.my_group.name
+  tenant_id           = var.tenant_id
+  sku_name            = "standard"
+}
+
+# Retrieve a key from the Key Vault
+resource "azurerm_key_vault_secret" "my_key" {
+  name         = "my-key"
+  key_vault_id = azurerm_key_vault.my_key_vault.id
+}
+
 
 # Create a virtual machine
 resource "azurerm_virtual_machine" "my_vm" {
