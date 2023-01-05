@@ -4,6 +4,14 @@ provider "azurerm" {
   features {}
 }
 
+# Load variables from the variable file
+variable "vm_name" {}
+variable "vm_size" {}
+variable "vm_image" {}
+
+variable "resource_group_name" {}
+
+
 # Create a resource group
 resource "azurerm_resource_group" "my_group" {
   name     = "my-resource-group"
